@@ -190,6 +190,7 @@ const element = {
   importCancel: document.getElementById('importCancel'),
   importConfirm: document.getElementById('importConfirm'),
   themeToggle: document.getElementById('themeToggle'),
+  backupAll: document.getElementById('backupAll'),
 };
 
 const roleTypeOptions = [
@@ -212,6 +213,17 @@ function saveState() {
     starStories: state.starStories,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function exportWorkspace() {
+  const data = JSON.stringify({ interviews: state.interviews, starStories: state.starStories }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `interview-mission-control-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function loadState() {
@@ -1460,6 +1472,7 @@ function bindDashboardEvents() {
 
 function bindGlobalEvents() {
   element.newInterviewButton.addEventListener('click', addNewInterview);
+  element.backupAll.addEventListener('click', exportWorkspace);
   element.dashboardNewInterview.addEventListener('click', addNewInterview);
   element.backToDashboard.addEventListener('click', () => renderDashboard());
   element.duplicateInterview.addEventListener('click', () => duplicateInterview(state.selectedInterviewId));
